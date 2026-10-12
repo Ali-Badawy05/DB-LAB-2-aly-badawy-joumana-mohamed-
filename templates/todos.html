@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}My To-Do list{% endblock %}
+{% block content %}
+<header class="topbar">
+  <h1>To-Do</h1>
+  <div class="who">
+    <span>Hi, {{ name }}</span>
+    <form method="post" action="{{ url_for('logout') }}"><button type="submit">Log out</button></form>
+  </div>
+</header>
+
+<form method="post" action="{{ url_for('add') }}" novalidate data-form="todo" class="add">
+  <ul class="errors" role="alert">{% for e in add_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  <div class="row">
+    <input type="text" name="title" value="{{ add_title }}" placeholder="What needs to be done?" aria-label="New to-do">
+    <input type="date" name="due_date" value="{{ add_due }}" aria-label="Due date (optional)" title="Due date (optional)">
+    <button type="submit" class="primary">Add</button>
+  </div>
+</form>
+
+<form method="get" action="{{ url_for('index') }}" class="search">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search your to-dos..." aria-label="Search">
+  <button type="submit">Search</button>
+  {% if q %}<a href="{{ url_for('index', q='') }}" class="clear">Clear</a>{% endif %}
+</form>
+
+<div class="bar">
+  <span class="count">{{ open_count }} open</span>
+  <nav class="filters" aria-label="Filter to-dos">
+    <a href="{{ url_for('index', filter='all') }}" class="{{ 'active' if current == 'all' }}">All</a>
+    <a href="{{ url_for('index', filter='open') }}" class="{{ 'active' if current == 'open' }}">Open</a>
+    <a href="{{ url_for('index', filter='done') }}" class="{{ 'active' if current == 'done' }}">Done</a>
+  </nav>
+</div>
+
+{% if todos %}
+<ul class="todos">
+  {% for t in todos %}
+  {% set overdue = t.due_date and not t.is_done and t.due_date < today %}
+  <li class="todo {{ 'done' if t.is_done }} {{ 'overdue' if overdue }}" style="--i: {{ [loop.index0, 10]|min }}">
+    <form method="post" action="{{ url_for('toggle', todo_id=t.todo_id) }}" class="toggle">
+      <input type="hidden" name="is_done" value="{{ 0 if t.is_done else 1 }}">
+      <button type="submit" class="check" aria-label="{{ 'Mark as not done' if t.is_done else 'Mark as done' }}">{{ '✓' if t.is_done else '' }}</button>
+    </form>
+
+    <form method="post" action="{{ url_for('edit', todo_id=t.todo_id) }}" novalidate data-form="todo" class="edit">
+      <ul class="errors" role="alert">{% if edit_id == t.todo_id %}{% for e in edit_errors %}<li>{{ e }}</li>{% endfor %}{% endif %}</ul>
+      <div class="row">
+        <input type="text" name="title" value="{{ edit_title if edit_id == t.todo_id else t.title }}" aria-label="To-do title">
+        <input type="date" name="due_date" value="{{ edit_due if edit_id == t.todo_id else (t.due_date.isoformat() if t.due_date else '') }}" aria-label="Due date" title="Due date">
+        <button type="submit">Save</button>
+      </div>
+      {% if overdue %}<span class="tag">Overdue</span>{% endif %}
+    </form>
+
+    <form method="post" action="{{ url_for('delete', todo_id=t.todo_id) }}" data-confirm="Are you sure you want to delete this to-do?">
+      <button type="submit" class="danger">Delete</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+{% if q %}
+<p class="empty">No to-dos match "{{ q }}".</p>
+{% elif current == 'open' %}
+<p class="empty">No open to-dos. Nice work!</p>
+{% elif current == 'done' %}
+<p class="empty">Nothing is marked done yet.</p>
+{% else %}
+<p class="empty">Nothing here yet. Type a task above and press Add.</p>
+{% endif %}
+{% endif %}
+{% endblock %}

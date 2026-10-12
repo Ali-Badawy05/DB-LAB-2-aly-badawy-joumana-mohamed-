@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<h1>Create your account</h1>
+<form method="post" action="{{ url_for('register') }}" novalidate data-form="register">
+  <ul class="errors" role="alert">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  <label>Name <input type="text" name="name" value="{{ form.get('name', '') }}" autocomplete="name"></label>
+  <label>Email <input type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email"></label>
+  <label>Password <input type="password" name="password" autocomplete="new-password"></label>
+  <label>Confirm password <input type="password" name="confirm_password" autocomplete="new-password"></label>
+  <button type="submit" class="primary">Register</button>
+</form>
+<p class="alt">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<h1>Log in</h1>
+<form method="post" action="{{ url_for('login') }}" novalidate data-form="login">
+  <ul class="errors" role="alert">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  <label>Email <input type="email" name="email" value="{{ form.get('email', '') }}" autocomplete="email"></label>
+  <label>Password <input type="password" name="password" autocomplete="current-password"></label>
+  <button type="submit" class="primary">Log in</button>
+</form>
+<p class="alt">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+{% endblock %}
