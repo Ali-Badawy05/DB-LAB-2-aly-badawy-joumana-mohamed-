@@ -3,7 +3,7 @@
 ## 1. Team
 | Name | ID 
 | Aly Badawy | 2304123 
-| Joumana Mohamed | 2304123 
+| Joumana Mohamed | 2304067
 
 ## 2. Technology
 - Back end: Python 3 + Flask, PyMySQL (plain SQL with `%s` parameters, no ORM), bcrypt, python-dotenv
